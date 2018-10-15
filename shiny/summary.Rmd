@@ -1,6 +1,6 @@
 ---
 title: "Présentation du package Shiny"
-subtitle: "Éléments d'introduction au concept d'une application web réactive avec R"
+subtitle: "Éléments d'introduction au développement d'une application web réactive avec R"
 date: Dernière màj en octobre 2018
 author:
   - Benoit Thieurmel, benoit.thieurmel@datastorm.fr
@@ -9,12 +9,12 @@ geometry: margin=3cm
 fontsize: 11pt
 documentclass: article
 bibliography: references.bib
-abstract: "Ce tutoriel a été développé avec à des fins pédagogiques afin d'initier des développeurs au package shiny. Il s'agit d'un package riche permettant de créer des applications interactives reposant sur une session R.  Cette introduction s'inspire de l'aide officielle (cf. https://shiny.rstudio.com/tutorial) et de notre expérience en programmation; elle est destinée à des personnes initiés à R qui n'ont pas nécessairement de connaissances en web. Associé à un support de présentation et des explications, nous espérons que cette présentation permettra au(x) lecteur(s) de prendre en main l'outil et de maîtriser les élements de base pour être autonome. Nous faisons également mention de plusieurs fonctionnalités qui permettront aux intéressés d'approfondir leurs connaissances et d'améliorer la qualité de leurs applications."
+abstract: "Ce tutoriel a été développé à des fins pédagogiques afin d'initier des développeurs au package shiny. Il s'agit d'un package riche permettant de créer des applications interactives reposant sur une session R.  Cette introduction s'inspire de l'aide officielle (cf. https://shiny.rstudio.com/tutorial) et de notre expérience en programmation; elle est destinée à des personnes initiés à R qui n'ont pas nécessairement de connaissances en web. Associé à un support de présentation et des explications, nous espérons que cette présentation permettra au(x) lecteur(s) de prendre en main l'outil et de maîtriser les élements de base pour être autonome. Nous faisons également mention de plusieurs fonctionnalités qui permettront aux intéressés d'approfondir leurs connaissances et d'améliorer la qualité de leurs applications."
 output:
   pdf_document:
     citation_package: natbib
     number_sections: yes
-    highlight: zenburn
+    highlight: kate
     includes:
       in_header: Templates_tex/header.tex
       before_body: Templates_tex/prefix_body.tex
@@ -23,16 +23,18 @@ output:
 
 # Shiny : créer des applications web avec le logiciel R
 
-Shiny \citep{shiny} est un package qui permet la création simple d'applications web intéractives depuis le logiciel open-source __R__. Il présente quelques intérêts non négligeables qui ont participé à son succès [^fn_shiny]:
+Shiny \citep{shiny} [^fn_shiny] est un package qui permet la création simple d'applications web intéractives depuis le logiciel open-source __R__ \citep{rcore}. Il présente quelques intérêts non négligeables qui ont contribué à son succès et au soutien de la communauté:
 
 - il ne nécessite pas de connaissances _web_;
 - les applicatonsse reposent sur la puissance de calcul **R**;
 - il permet de développer des applications intéractives inspirées du web actuel;
 - il permet de créer des applications locales ou partagées avec l'utilisation d'un _\og shiny-server\fg{}_ [^fn_server].
 
-Une application __shiny__ nécessite un ordinateur/un serveur exécutant une session __R__ (cf. figure~\ref{schema_principe}, page~\pageref{schema_principe})
+Une application __shiny__ nécessite un ordinateur/un serveur exécutant une session __R__.
 
-![Schéma de fonctionnement Serveur/Interface \label{schema_principe}](img/server_R.png)
+\begin{center}
+  \includegraphics[width=\textwidth]{img/server_R.png}
+\end{center}
 
 [^fn_shiny]: Plus de détails sur __shiny__ à l'adresse <http://shiny.rstudio.com>.
 [^fn_server]: Plus de détails sur l'utilisation de __shiny-server__ à l'adresse <https://www.rstudio.com/products/shiny/shiny-server>.
@@ -109,9 +111,9 @@ shinyServer(function(input, output) {
 
 Avec cette exemple simple, nous pouvons introduire et comprendre les points suivants: 
 
-- Côté _ui_, on définit un slider numérique avec le code `sliderInput(inputId = "bins",...)` et on utilise sa valeur côté _server_ avec la notation `input$bins`:  c'est comme cela que l'interface créé des variables disponibles dans le serveur !
+- Côté _ui_, on définit un curseur numérique avec le code `sliderInput(inputId = "bins",...)` et on utilise sa valeur côté _server_ avec la notation `input$bins`:  c'est comme cela que l'interface créé des variables disponibles dans le serveur !
 
-- Côté _server_,  nous créons un graphique `output$distPlot <- renderPlot({...})` et l'appelons dans le _ui_ avec `plotOutput(outputId = "distPlot")`: c'est comme cela que le serveur retourne des objets à l'interface !
+- Côté _server_,  nous créons un graphique `output$distPlot <- renderPlot({...})` et l'appelons dans l' _ui_ avec `plotOutput(outputId = "distPlot")`: c'est comme cela que le serveur retourne des objets à l'interface !
 
 Un schéma du dialogue entre le serveur et l'interface est représenté en figure~\ref{dial_ui_server}, page~\pageref{dial_ui_server}, il y a deux points principaux à retenir:
 
@@ -126,19 +128,13 @@ Un schéma du dialogue entre le serveur et l'interface est représenté en figur
 
 L'interface utilisateur, permet la déclaration des inputs, le placement des outputs et l'organisation visuelle de la page. Il y a deux grandes familles d'éléments:
 
-1. xxInput(inputId = ..., ...):
-
-    * définit un élément qui permet une action de l'utilisateur;
-    * accessible côté serveur avec son identifiant `input$[inputID]`.
+1. xxInput(inputId = ..., ...): pour définir un élément qui permet une action de l'utilisateur, ce dernier sera accessible côté serveur via son identifiant `input$[inputID]`.
 
 \begin{center}
   \includegraphics[width=10cm]{img/xxInput.png}
 \end{center}
 
-2. xxOutput(ouputId = ...):
-
-    * fait référence à un output créé et défini côté serveur;
-    * il s'agit en général de graphiques et de tableaux.
+2. xxOutput(ouputId = ...): pour faire référence à un output créé et défini côté serveur, il s'agit en général de graphiques et de tableaux.
 
 \begin{center}
   \includegraphics[width=10cm]{img/renderXX.png}
@@ -148,15 +144,11 @@ Dans la partie serveur/calculs, on déclare les output, on utilise les inputs et
 
 # Les inputs
 
-## Vue globale
+Les principaux éléments d'interface sont représentés ci-après. Dans la suite, on détaille successivement le fonctionnement de certains d'entres-eux.
 
-Les principaux éléments d'interface sont représentés en figure~\ref{list_inputs}, page~\pageref{list_inputs}. Dans la suite, on détaille successivement le fonctionnement de quelques éléments usuels.
-
-\begin{figure}
-  \centering
+\begin{center}
   \includegraphics[width=12cm]{img/all_input.png}
-  \caption{Quelques inputs usuels et leur illustration \label{list_inputs}}
-\end{figure}
+\end{center}
 
 ## Valeurs numériques
 
@@ -444,15 +436,11 @@ Avec un peu de compétences dans les langages HTML, CSS et JavaScript, il est é
 
 # Outputs
 
-## Vue globale
+Il existe de nombreux outputs. Dans la suite, nous en présentons les principaux. Bien-sûr, seuls les éléments de base y figurent i.e., ceux directement disponibles en chargeant le package **shiny**, beaucoup de packages permettent d'en obtenir de nouveaux.
 
-Il existe de nombreux outputs, nous en présentons les principaux en figure~\ref{list_outputs}, page~\pageref{list_outputs}. Bien-sûr, seuls les éléments de base y figurent, beaucoup de packages permettent d'en obtenir de nouveaux.
-
-\begin{figure}
-  \centering
+\begin{center}
   \includegraphics[width=\textwidth]{img/all_output.png}
-  \caption{Éléments de base: leur définition côté serveur et leur appel depuis l'interface \label{list_outputs}}
-\end{figure}
+\end{center}
 
 Pour assurer un bon fonctionnement, il faut assigner un identifiant (unique) à l'output pour permettre son référencement et son utilisation côté interface. On utilise une expression de type __renderXX({expr})__ dont __la dernière instruction doit correspondre au type d'objet retourné__. Dans une telle expression, il est possible, et souvent utile, d'utiliser l'état des éléments de l'interface pour amener de la réactivité. On utilise pour cela la liste `input` et l'identifiant recherché `input$[inputId]`.
 
@@ -1342,7 +1330,7 @@ L'option ``options(shiny.error = browser)`` permet de lancer un ``broswer()`` au
 options(shiny.error = browser)
 ```
 
-## Mode "showcase"
+## Mode showcase
 
 En lançant une application avec l'option  ``display.mode="showcase"`` et l'utilisation de la fonction ``runApp()``, on peut observer en direct l'éxécution du code :
 
