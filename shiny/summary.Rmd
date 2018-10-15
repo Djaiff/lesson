@@ -1,55 +1,60 @@
 ---
-title: "Présentation R - Shiny"
-author: "B.Thieurmel, benoit.thieurmel@datastorm.fr"
+title: "Présentation du package Shiny"
+subtitle: "Éléments d'introduction au concept d'une application web réactive avec R"
+date: Dernière màj en octobre 2018
+author:
+  - Benoit Thieurmel, benoit.thieurmel@datastorm.fr
+  - Jeffery Petit, jeffery.petit@ls2n.fr
+geometry: margin=3cm
+fontsize: 11pt
+documentclass: article
+bibliography: references.bib
+abstract: "Ce tutoriel a été développé avec à des fins pédagogiques afin d'initier des développeurs au package shiny. Il s'agit d'un package riche permettant de créer des applications interactives reposant sur une session R.  Cette introduction s'inspire de l'aide officielle (cf. https://shiny.rstudio.com/tutorial) et de notre expérience en programmation; elle est destinée à des personnes initiés à R qui n'ont pas nécessairement de connaissances en web. Associé à un support de présentation et des explications, nous espérons que cette présentation permettra au(x) lecteur(s) de prendre en main l'outil et de maîtriser les élements de base pour être autonome. Nous faisons également mention de plusieurs fonctionnalités qui permettront aux intéressés d'approfondir leurs connaissances et d'améliorer la qualité de leurs applications."
 output:
   pdf_document:
-    number_sections: true
-    highlight: tango
+    citation_package: natbib
+    number_sections: yes
+    highlight: zenburn
+    includes:
+      in_header: Templates_tex/header.tex
+      before_body: Templates_tex/prefix_body.tex
+      
 ---
 
 # Shiny : créer des applications web avec le logiciel R
 
-__Shiny__ est un package __R__ qui permet la création simple d'applications web intéractives depuis le logiciel open-source __R__.
+Shiny \citep{shiny} est un package qui permet la création simple d'applications web intéractives depuis le logiciel open-source __R__. Il présente quelques intérêts non négligeables qui ont participé à son succès [^fn_shiny]:
 
-- pas de connaissances _web_ nécessaires
-- le pouvoir de calcul de R et l'intéractivité du web actuel
-- pour créer des applications locales
-- ou partagées avec l'utilisation __shiny-server__
+- il ne nécessite pas de connaissances _web_;
+- les applicatonsse reposent sur la puissance de calcul **R**;
+- il permet de développer des applications intéractives inspirées du web actuel;
+- il permet de créer des applications locales ou partagées avec l'utilisation d'un _\og shiny-server\fg{}_ [^fn_server].
 
-Plus de détails sur __Shiny__ <http://shiny.rstudio.com>.
+Une application __shiny__ nécessite un ordinateur/un serveur exécutant une session __R__ (cf. figure~\ref{schema_principe}, page~\pageref{schema_principe})
 
-Plus de détails sur l'utilisation de __shiny-server__ : <https://www.rstudio.com/products/shiny/shiny-server/>.
+![Schéma de fonctionnement Serveur/Interface \label{schema_principe}](img/server_R.png)
 
-Une application __shiny__ nécessite un ordinateur/un serveur éxécutant __R__
-
-![server](img/server_R.png)
-
-
-# Ma première application avec shiny
-
-- Initialiser une application est simple avec __RStudio__, en créant un nouveau projet
-
-* File > New Project > New Directory > Shiny Web Application
-* Basée sur deux scripts : ui.R et server.R
-* Et utilisant par défaut le sidebar layout
-
-- Commandes utiles :
-+ lancement de l'application : bouton __Run app__
-+ actualisatisation : bouton __Reload app__
-+ arrêt : bouton __Stop__
+[^fn_shiny]: Plus de détails sur __shiny__ à l'adresse <http://shiny.rstudio.com>.
+[^fn_server]: Plus de détails sur l'utilisation de __shiny-server__ à l'adresse <https://www.rstudio.com/products/shiny/shiny-server>.
 
 
-![run](img/run_app.png)
+\section{Première application avec shiny}
 
-- __Run in Window__ : Nouvelle fenêtre, utilisant l'environnement __RStudio__
-- __Run in Viewer Pane__ : Dans l'onglet _Viewer_ de __RStudio__
-- __Run External__ : Dans le navigateur web par défaut
+Initialiser une application est simple avec **RStudio** \citep{rstudio}, en créant un nouveau projet: _File > New Project > New Directory > Shiny Web Application._ Cette dernière est souvent basée sur deux scripts ui.R et server.R (voir section~\ref{section_arborescence}, page~\pageref{section_arborescence}), et utilise par défaut le `sidebarLayout`.
 
-![stop](img/stop.png)
+Également l'interface de cet IDE est bien pensée pour le développement d'applications avec **shiny**. On lance une application en cliquant sur le bouton __Run app__.
 
-# Intéractivité et communication
+\begin{center}
+  \includegraphics[width=12cm]{img/run_app.png}
+\end{center}
 
-## Introduction
+Une fois l'application lancée, il est possible de rafraîchir l'affichage ou d'arrêter l'application à l'aide de boutons dédiés.
+
+\begin{center}
+  \includegraphics[width=12cm]{img/stop.png}
+\end{center}
+
+Voici un un exemple d'une première application, le rendu est présenté en figure~\ref{shiny_app}, page~\pageref{shiny_app}:
 
 **ui.R**:
 
@@ -95,77 +100,69 @@ shinyServer(function(input, output) {
 })
 ```
 
-![hello](img/hello_shiny.png)
 
-Avec cette exemple simple, nous comprenons : 
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{img/hello_shiny.png}
+  \caption{Capture d'image d'une première application. \label{shiny_app}}
+\end{figure}
 
-- Côté **ui**, nous définissons un slider numérique avec le code "`sliderInput(inputId = "bins",...)`" et on utilise sa valeur côté **server** avec la notation "`input$bins`" :  c'est comme cela que le  **ui** créé des variables disponibles dans le **server** !
+Avec cette exemple simple, nous pouvons introduire et comprendre les points suivants: 
 
-- Côété **server**,  nous créons un graphique "`output$distPlot <- renderPlot({...})`" et l'appelons dans le **ui** avec "`plotOutput(outputId = "distPlot")`", c'est comme cela que le **server** retourne des objet à **ui** !
+- Côté _ui_, on définit un slider numérique avec le code `sliderInput(inputId = "bins",...)` et on utilise sa valeur côté _server_ avec la notation `input$bins`:  c'est comme cela que l'interface créé des variables disponibles dans le serveur !
 
-## Process
+- Côté _server_,  nous créons un graphique `output$distPlot <- renderPlot({...})` et l'appelons dans le _ui_ avec `plotOutput(outputId = "distPlot")`: c'est comme cela que le serveur retourne des objets à l'interface !
 
-![Understand communication](img/shiny_process.png)
+Un schéma du dialogue entre le serveur et l'interface est représenté en figure~\ref{dial_ui_server}, page~\pageref{dial_ui_server}, il y a deux points principaux à retenir:
 
+1. le serveur et l'interface communiquent uniquement par le biais des inputs et des outputs;
+2. par défaut, un output est mis à jour chaque fois qu'un input en lien change.
 
-__Le server et l'ui communiquent uniquement par le biais des inputs et des outputs__
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/shiny_process.png}
+  \caption{Fonctionnement de la communication entre le serveur et l'interface. \label{dial_ui_server}}
+\end{figure}
 
-__Par défaut, un output est mis-à-jour chaque fois qu'un input en lien change__
+L'interface utilisateur, permet la déclaration des inputs, le placement des outputs et l'organisation visuelle de la page. Il y a deux grandes familles d'éléments:
 
-## Notice
+1. xxInput(inputId = ..., ...):
 
-__la définition de l'interface utilisateur : UI__
+    * définit un élément qui permet une action de l'utilisateur;
+    * accessible côté serveur avec son identifiant `input$[inputID]`.
 
-- la déclaration des inputs
-- la structure de la page, avec le placement des outputs
+\begin{center}
+  \includegraphics[width=10cm]{img/xxInput.png}
+\end{center}
 
-__la partie serveur/calculs : SERVER__
+2. xxOutput(ouputId = ...):
 
-- la déclaration et le calcul des outputs
+    * fait référence à un output créé et défini côté serveur;
+    * il s'agit en général de graphiques et de tableaux.
 
-## UI 
+\begin{center}
+  \includegraphics[width=10cm]{img/renderXX.png}
+\end{center}
 
-__Deux types d'éléments dans le UI__
-
-- xxInput(inputId = ..., ...):
-
-* définit un élément qui permet une action de l'utilisateur
-* accessible côté serveur avec son identifiant __input$inputID__
-
-![Understand communication](img/xxInput.png)
-
-- xxOutput(ouputId = ...):
-
-* fait référence à un output créé et défini côté serveur
-* en général : graphiques et tableaux
-
-![Understand communication](img/xxOutput.png)
-
-## Serveur
-
-__Définition des outputs dans le serveur__
-
-- renderXX({expr}):
-
-* calcule et retourne une sortie, dépendante d'inputs, via une expression __R__
-
-![Understand communication](img/renderXX.png)
-
-## Retour sur le process
-
-![Understand communication](img/shiny_process.png)
-
-__C'est plus clair ?__
+Dans la partie serveur/calculs, on déclare les output, on utilise les inputs et on code en **R** ! Grâce aux expressions `renderXX({expr})`, on calcule et retourne une sortie, dépendante d'input(s), via une expression __R__.
 
 # Les inputs
 
 ## Vue globale
 
-![Understand communication](img/all_input.png)
+Les principaux éléments d'interface sont représentés en figure~\ref{list_inputs}, page~\pageref{list_inputs}. Dans la suite, on détaille successivement le fonctionnement de quelques éléments usuels.
 
-## Valeur numérique
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{img/all_input.png}
+  \caption{Quelques inputs usuels et leur illustration \label{list_inputs}}
+\end{figure}
 
-- La fonction
+## Valeurs numériques
+
+### Valeur au choix
+
+- La fonction:
 
 ```{r, echo = TRUE, eval = FALSE}
 numericInput(inputId, label, value, min = NA, max = NA, step = NA)
@@ -181,146 +178,11 @@ numericInput(inputId = "idNumeric", label = "Please select a number",
 # ("integer" when the parameter step is an integer value)
 ```
 
-![numeric](img/numeric.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/numeric.png}
+\end{center}
 
-## Chaîne de caractères
-
-- La fonction 
-```{r, echo = TRUE, eval = FALSE}
-textInput(inputId, label, value = "")
-
-```
-
-- Exemple:
-```{r, echo = TRUE, eval = FALSE}
-textInput(inputId = "idText", label = "Enter a text", value = "")
-
-# For the server input$idText will be of class "character" 
-```
-
-![text](img/text.png)
-
-## Liste de sélection
-
-- La fonction 
-
-```{r, echo = TRUE, eval = FALSE}
-selectInput(inputId, label, choices, selected = NULL, multiple = FALSE,
-            selectize = TRUE, width = NULL, size = NULL)
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-selectInput(inputId = "idSelect", label = "Select among the list: ", selected = 3,
-            choices = c("First" = 1, "Second" = 2, "Third" = 3))
-
-# For the server input$idSelect is of class "character"
-# (vector when the parameter "multiple" is TRUE)
-```
-
-![us](img/unique_select.png)
-
-## Checkbox
-
-- La fonction
-
-```{r, echo = TRUE, eval = FALSE}
-checkboxInput(inputId, label, value = FALSE)
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-checkboxInput(inputId = "idCheck1", label = "Check ?")
-
-# For the server input$idCheck1 is of class "logical"
-```
-
-![sc](img/logical.png)
-
-## Checkboxes multiple 
-
-- La fonction
-
-```{r, echo = TRUE, eval = FALSE}
-checkboxGroupInput(inputId, label, choices, selected = NULL, inline = FALSE)
-
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-checkboxGroupInput(inputId = "idCheckGroup", label = "Please select", selected = 3,
-                   choices = c("First" = 1, "Second" = 2, "Third" = 3))
-
-# For the server input$idCheckGroup is a "character" vector
-```
-
-![mc](img/multiple_checkbox.png)
-
-## Radio boutons
-
-- La fonction
-
-```{r, echo = TRUE, eval = FALSE}
-radioButtons(inputId, label, choices, selected = NULL, inline = FALSE)
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-radioButtons(inputId = "idRadio", label = "Select one", selected = 3,
-             choices = c("First" = 1, "Second" = 2, "Third" = 3))
-
-# For the server input$idRadio is a "character"
-```
-
-![rb](img/radio.png)
-
-## Date
-
-- La fonction
-
-```{r, echo = TRUE, eval = FALSE}
-dateInput(inputId, label, value = NULL, min = NULL, max = NULL, format = "yyyy-mm-dd", 
-          startview = "month", weekstart = 0, language = "en")
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-dateInput(inputId = "idDate", label = "Please enter a date", value = "12/08/2015",
-          format = "dd/mm/yyyy", startview = "month", weekstart = 0, language = "fr")
-
-# For the server input$idDate is a "Date"
-```
-
-![d](img/date.png)
-
-## Période
-
-- La fonction
-
-```{r, echo = TRUE, eval = FALSE}
-dateRangeInput(inputId, label, start = NULL, end = NULL, min = NULL, max = NULL,
-               format = "yyyy-mm-dd", startview = "month", weekstart = 0,
-               language = "en", separator = " to ")
-```
-
-- Exemple:
-
-```{r, echo = TRUE, eval = FALSE}
-dateRangeInput(inputId = "idDateRange", label = "Please Select a date range",
-               start = "2015-01-01", end = "2015-08-12", format = "yyyy-mm-dd",
-               language = "en", separator = " to ")
-
-# For the server input$idDateRange is a vector of class "Date" with two elements
-```
-
-![dr](img/date_range.png)
-
-## Slider numérique : valeur unique
+### Curseur: valeur unique
 
 - La fonction
 
@@ -340,9 +202,12 @@ sliderInput(inputId = "idSlider1", label = "Select a number", min = 0, max = 10,
 # (integer when the parameter "step" is an integer too)
 ```
 
-![sl](img/slider.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/slider.png}
+\end{center}
 
-## Slider numérique : range
+
+### Curseur: intervalle
 
 - La fonction
 
@@ -362,9 +227,172 @@ sliderInput(inputId = "idSlider2", label = "Select a number", min = 0, max = 10,
 # (integer when the parameter "step" is an integer too)
 ```
 
-![msl](img/multiple_slider.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/multiple_slider.png}
+\end{center}
 
-## Importer un fichier
+## Les chaînes de caractère(s)
+
+### Valeur libre
+
+- La fonction 
+```{r, echo = TRUE, eval = FALSE}
+textInput(inputId, label, value = "")
+
+```
+
+- Exemple:
+```{r, echo = TRUE, eval = FALSE}
+textInput(inputId = "idText", label = "Enter a text", value = "")
+
+# For the server input$idText will be of class "character" 
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/text.png}
+\end{center}
+
+### Liste de sélection
+
+- La fonction 
+
+```{r, echo = TRUE, eval = FALSE}
+selectInput(inputId, label, choices, selected = NULL, multiple = FALSE,
+            selectize = TRUE, width = NULL, size = NULL)
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+selectInput(inputId = "idSelect", label = "Select among the list: ", selected = 3,
+            choices = c("First" = 1, "Second" = 2, "Third" = 3))
+
+# For the server input$idSelect is of class "character"
+# (vector when the parameter "multiple" is TRUE)
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/unique_select.png}
+\end{center}
+
+## Les cases à cocher
+
+### Une seule sélection
+
+- La fonction
+
+```{r, echo = TRUE, eval = FALSE}
+checkboxInput(inputId, label, value = FALSE)
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+checkboxInput(inputId = "idCheck1", label = "Check ?")
+
+# For the server input$idCheck1 is of class "logical"
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/logical.png}
+\end{center}
+
+
+### Sélection multiple
+
+- La fonction
+
+```{r, echo = TRUE, eval = FALSE}
+checkboxGroupInput(inputId, label, choices, selected = NULL, inline = FALSE)
+
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+checkboxGroupInput(inputId = "idCheckGroup", label = "Please select", selected = 3,
+                   choices = c("First" = 1, "Second" = 2, "Third" = 3))
+
+# For the server input$idCheckGroup is a "character" vector
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/multiple_checkbox.png}
+\end{center}
+
+
+### Choix alternatifs
+
+- La fonction
+
+```{r, echo = TRUE, eval = FALSE}
+radioButtons(inputId, label, choices, selected = NULL, inline = FALSE)
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+radioButtons(inputId = "idRadio", label = "Select one", selected = 3,
+             choices = c("First" = 1, "Second" = 2, "Third" = 3))
+
+# For the server input$idRadio is a "character"
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/radio.png}
+\end{center}
+
+
+## Sélection de date(s)
+
+### Date unique
+
+- La fonction
+
+```{r, echo = TRUE, eval = FALSE}
+dateInput(inputId, label, value = NULL, min = NULL, max = NULL, format = "yyyy-mm-dd", 
+          startview = "month", weekstart = 0, language = "en")
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+dateInput(inputId = "idDate", label = "Please enter a date", value = "12/08/2015",
+          format = "dd/mm/yyyy", startview = "month", weekstart = 0, language = "fr")
+
+# For the server input$idDate is a "Date"
+```
+
+\begin{center}
+  \includegraphics[width=10cm]{img/date.png}
+\end{center}
+
+
+### Période
+
+- La fonction
+
+```{r, echo = TRUE, eval = FALSE}
+dateRangeInput(inputId, label, start = NULL, end = NULL, min = NULL, max = NULL,
+               format = "yyyy-mm-dd", startview = "month", weekstart = 0,
+               language = "en", separator = " to ")
+```
+
+- Exemple:
+
+```{r, echo = TRUE, eval = FALSE}
+dateRangeInput(inputId = "idDateRange", label = "Please Select a date range",
+               start = "2015-01-01", end = "2015-08-12", format = "yyyy-mm-dd",
+               language = "en", separator = " to ")
+
+# For the server input$idDateRange is a vector of class "Date" with two elements
+```
+
+\begin{center}
+  \includegraphics[width=12cm]{img/date_range.png}
+\end{center}
+
+## Import d'un fichier
 
 - La fonction
 
@@ -381,9 +409,12 @@ fileInput(inputId = "idFile", label = "Select a file")
 # (name, size, type and datapath) and one row
 ```
 
-![up](img/file.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/file.png}
+\end{center}
 
-## Action Bouton
+
+## Le bouton de validation
 
 - La fonction
 
@@ -400,32 +431,31 @@ actionButton(inputId = "idActionButton", label = "Click !",
 # For the server input$idActionButton is an "integer"
 ```
 
-![ab](img/action.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/action.png}
+\end{center}
 
-## Aller plus loin : construire son propre input
 
-__Avec un peu de compétences en HTML/CSS/JavaScript, il est également possible de construire des inputs personnalisés__
+Avec un peu de compétences dans les langages HTML, CSS et JavaScript, il est également possible de construire des inputs personnalisés. Un tutoriel est disponible à cette adresse: <http://shiny.rstudio.com/articles/building-inputs.html>. On peut également se référer aux deux applications suivantes à titre d'exemple: 
 
-Un tutoriel est disponible : [http://shiny.rstudio.com/articles/building-inputs.html](http://shiny.rstudio.com/articles/building-inputs.html)
+- <http://shiny.rstudio.com/gallery/custom-input-control.html>
 
-Ainsi que deux applications d'exemples : 
-
-- [http://shiny.rstudio.com/gallery/custom-input-control.html](http://shiny.rstudio.com/gallery/custom-input-control.html)
-
-- [http://shiny.rstudio.com/gallery/custom-input-bindings.html](http://shiny.rstudio.com/gallery/custom-input-bindings.html)
+- <http://shiny.rstudio.com/gallery/custom-input-bindings.html>
 
 # Outputs
 
 ## Vue globale
 
-![ab](img/all_output.png)
+Il existe de nombreux outputs, nous en présentons les principaux en figure~\ref{list_outputs}, page~\pageref{list_outputs}. Bien-sûr, seuls les éléments de base y figurent, beaucoup de packages permettent d'en obtenir de nouveaux.
 
-## Les bonnes règles de construction
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/all_output.png}
+  \caption{Éléments de base: leur définition côté serveur et leur appel depuis l'interface \label{list_outputs}}
+\end{figure}
 
-- assigner l'output à afficher dans la liste __output__, avec un nom permettant l'identification côté __UI__
-- utiliser une fonction __renderXX({expr})__
-- __la dernière expression doit correspondre au type d'objet retourné__
-- accéder aux inputs, et amener la réactivité, en utilisant la liste __input__ et l'identifiant : __input$inputId__
+Pour assurer un bon fonctionnement, il faut assigner un identifiant (unique) à l'output pour permettre son référencement et son utilisation côté interface. On utilise une expression de type __renderXX({expr})__ dont __la dernière instruction doit correspondre au type d'objet retourné__. Dans une telle expression, il est possible, et souvent utile, d'utiliser l'état des éléments de l'interface pour amener de la réactivité. On utilise pour cela la liste `input` et l'identifiant recherché `input$[inputId]`.
+
 
 ```{r, echo = TRUE, eval = FALSE}
 #ui.R
@@ -435,7 +465,11 @@ verbatimTextOutput(outputId = "selection")
 output$selection <- renderPrint({input$lettre})
 ```
 
-## Print
+## Textes
+
+### Verbatim
+
+Ce type de retour est utilisé pour renvoyer du texte brut (e.g., le résultat d'une sortie console).
 
 - __ui.r__:
 
@@ -451,9 +485,13 @@ output$texte <- renderPrint({
 })
 ```
 
-![op](img/otext.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/otext.png}
+\end{center}
 
-## Text
+### Texte standard
+
+Très basique, cela permet de renvoyer du texte lorsqu'il n'est pas possible de l'indiquer directement côté interface.
 
 - __ui.r__:
 
@@ -469,9 +507,15 @@ output$texte <- renderText({
 })
 ```
 
-![op2](img/otext2.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/otext2.png}
+\end{center}
 
-### Plot
+## Graphiques
+
+On peut renvoyer les graphiques **R** de base très simplement.
+
+
 
 - __ui.r__: 
 
@@ -487,9 +531,17 @@ output$myplot <- renderPlot({
 })
 ```
 
-![op3](img/oplot.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/oplot.png}
+\end{center}
 
-## Table
+## Tableaux
+
+Le package **shiny** donne la possibilité d'afficher les tableaux de deux façons différentes.
+
+### Tableau basique
+
+Avec cette fonction, le tableau ne présentera aucune option d'affichage.
 
 - __ui.r__:
 
@@ -503,9 +555,13 @@ tableOutput(outputId = "table")
 output$table <- renderTable({iris})
 ```
 
-![op4](img/otable.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/otable.png}
+\end{center}
 
-## DataTable
+### Tableau interactif
+
+Avec cette fonction, il est possible d'ajouter beaucoup d'options (tri, filtre, etc.).
 
 - __ui.r__:
 
@@ -521,17 +577,14 @@ output$dataTable <- renderDataTable({
 })
 ```
 
-![op5](img/odatable.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/odatable.png}
+\end{center}
 
-## Définir des élements de l'UI côté SERVER | Définition
+## Définir des élements de l'UI côté SERVER
 
-__Dans certains cas, nous souhaitons définir des inputs ou des structures côté server__
-
-__L'exemple typique étant de créer un input dépendant d'un fichier utilisateur, comme lister les colonnes présentes__
-
-Cela est possible avec les fonctions ``uiOutput`` et ``renderUI``
-
-## Définir des élements de l'UI côté SERVER | Exemple simple
+Dans certains cas, on souhaite définir des inputs ou des structures côté server (e.g., créer un input dépendant d'un fichier utilisateur, comme lister les colonnes présentes). Cela est possible avec les fonctions ``uiOutput`` et ``renderUI``.
+Voici un exemple simple:
 
 - __ui.r__: 
 ```{r, echo = TRUE, eval = FALSE}
@@ -544,13 +597,11 @@ output$columns <- renderUI({
 })
 ```
 
-![op5](img/ui_output.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/ui_output.png}
+\end{center}
 
-## Définir des élements de l'UI côté SERVER | Exemple plus complexe
-
-- __On peut également renvoyer un élément plus complexe de l'UI, par exemple :__
-    * tout en ``layout``
-    * ou une ``fluidRow``
+On peut également renvoyer un élément d'interface plus complexe, par exemple tout un ``layout`` ou une ``fluidRow``:
 
 - __ui.r__: 
 ```{r, echo = TRUE, eval = FALSE}
@@ -566,23 +617,15 @@ output$fluidRow_ui <- renderUI(
 )
 ```
 
-## Aller plus loin : construire son propre output
+Encore une fois et c'est aussi ce qui fait la force de du package **shiny**, on peut construire des outputs avec un peu de compétences en HTML/CSS/JavaScript. Un tutoriel est disponible à cette adresse <http://shiny.rstudio.com/articles/building-outputs.html>.
 
-__Avec un peu de compétences en HTML/CSS/JavaScript, il est également possible de construire des outputs personnalisés__
+# Arborescence d'une application \label{section_arborescence}
 
-Un tutoriel est disponible : [http://shiny.rstudio.com/articles/building-outputs.html](http://shiny.rstudio.com/articles/building-outputs.html)
+Il est possible de défnir une application de différentes façons. Bien que déconseillé dans la majorité des cas, on peut n'utiliser qu'un seul script enregistré sous le nom __app.R__. Il doit alors se terminer par l'instruction `shinyApp()`. Cette utilisation doit vraiement être dédiée aux applications légères.
 
-On peut donc par exemple ajouter comme output un graphique construit avec la librairie [d3.js](https://d3js.org/). Un exemple est disponible dans le dossier ``shinyApps/build_output``.
-
-# Structure d'une application
-## Un seul fichier
-
-- enregistré sous le nom __app.R__
-- se terminant par la commande shinyApp()
-- pour les applications légères
-
-![Understand communication](img/single_app.png)
-
+\begin{center}
+  \includegraphics[width=14cm]{img/single_app.png}
+\end{center}
 
 ```{r, eval = FALSE}
 library(shiny)
@@ -599,13 +642,11 @@ server <- function(input, output) {
 shinyApp(ui = ui, server = server)
 ```
 
-## Deux fichiers
+Plus généralement, on créera deux scripts. L'un dédié au serveur dans le script __server.R__, l'autre à l'interface dans le script __ui.R__.
 
-- côté interface utilisateur dans le script __ui.R__
-- côté serveur dans le script __server.R__
-
-![Understand communication](img/dual_apps.png)
-
+\begin{center}
+  \includegraphics[width=14cm]{img/dual_apps.png}
+\end{center}
 
 __ui.R__
 ```{r, eval = FALSE}
@@ -625,43 +666,42 @@ function(input, output) {
 }
 ```
 
-## UI en HTML
+## Codage de l'interface en HTML
 
-Même si en général on code le __UI__ dans un __script R__, il est également possible de le coder entièrement dans un fichier __.html__. Plus d'informations [ici](http://shiny.rstudio.com/articles/html-ui.html)
+Même si en général on code l'interface dans un script __R__, il est également possible de la coder entièrement dans un fichier **HTML** [^fn_uihtml]. L'application reposera alors sur deux scripts (cf. figure~\ref{ui_html}): 
 
-- côté interface utilisateur, un fichier __index.html__ dans le répertoire ``www``
-- côté serveur dans le script __server.R__
+1. __server.R__ dans le répertoire principal de l'application;
+2. __index.html__ dans le sous-répertoire ``www``.
 
-![](img/html_apps.png)
+[^fn_uihtml]: Le fonctionnement est détaillé sur l'aide officielle à l'adresse suivante <http://shiny.rstudio.com/articles/html-ui.html>.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/html_apps.png}
+  \caption{Les éléments annexes, images, CSS, etc. \label{ui_html}}
+\end{figure}
 
 ## Données/fichiers complémentaires
 
-- le code __R__ tourne au niveau des scripts __R__, et peut donc accéder de façon relative à tous les objets présents dans le dossier de l'application
-- l'application web, comme de convention, accède à tous les éléments présents dans le dossier ``www``
+Le code __R__ s'exécute au niveau du répertoire principal. On peut donc accéder de façon relative à tous les objets (scripts et données) présents dans le dossier de l'application. De plus, l'application côté client (comme de convention pour le web) accède à tous les éléments présents dans le dossier ``www``. On illustre en figure~\ref{arborescence} l'arborescence d'une application pour laquelle on utilise plusieurs sous-dossiers.
 
-![Understand communication](img/more_apps.png)
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/more_apps.png}
+  \caption{Arborescence d'une application avec plusieurs sous-dossiers. \label{arborescence}}
+\end{figure}
 
 ## Partage ui <-> server
 
-__Le server et l'ui communiquent uniquement par le biais des inputs et des outputs__
+Le serveur et l'interface communiquent uniquement par le biais des inputs et des outputs. Il est possible d'ajouter un script nommé **global.R** pour partager des éléments (variables,  packages, ...) entre la partie interface et la partie serveur. Tout ce qui est présent dans le script **global.R** est ainsi visible/accessible à la fois depuis __ui.R__ et __server.R__. Le script **global.R** est sourcé une seule fois au lancement de l'application. Dans le cas d'une utilisation avec un ``shiny-server``, les objets globaux sont également partagés entre les utilisateurs à la différence des objets de session [^fn_scoping].
 
-- Nous pouvons ajouter un script nommé **global.R** pour partager des éléments (variables,  packages, ...) entre la partie __UI__ et la partie __SERVER__ 
-
-- Tout ce qui est présent dans le **global.R** est visible à la fois dans le __ui.R__ et dans le __server.R__
-
-- Le script **global.R** est chargé uniquement une seul fois au lancement de l'application
-
-- Dans le cas d'une utilisation avec un ``shiny-server``, les objets globaux sont également partagés entre les utilisateurs
+[^fn_scoping]: Plus d'informations sur la portée des variables sont accessibles sur l'aide officielle à l'adresse suivante <http://shiny.rstudio.com/articles/scoping.html>.
 
 # Structurer sa page
 
-## sidebarLayout
+## Division 1/3, 2/3
 
-Le template basique `sidebarLayout` divise la page en deux colonnes et doit contenir :
-
-- `sidebarPanel`, à gauche, en général pour les inputs
-
-- `mainPanel`, à droite, en général pour les outputs
+Le template basique `sidebarLayout` divise la page en deux colonnes et doit contenir (a) un `sidebarPanel` à gauche en général dédié aux inputs (b) un `mainPanel` à droite en général pour les outputs.
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -673,12 +713,13 @@ shinyUI(fluidPage(
 ))
 ```
 
+\begin{center}
+  \includegraphics[width=14cm]{img/sidabar.png}
+\end{center}
 
-![sdb](img/sidabar.png)
+## Le wellPanel
 
-## wellPanel
-
-Comme avec le ``sidebarPanel`` précédent, on peut griser un ensemble d'éléments en utilisant un ``wellPanel`` :
+Comme pour le ``sidebarPanel`` précédent, on peut griser un ensemble d'éléments en utilisant un ``wellPanel``:
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -691,12 +732,13 @@ shinyUI(fluidPage(
 ))
 ```
 
+\begin{center}
+  \includegraphics[width=14cm]{img/wellPanel.png}
+\end{center}
 
-![sdb](img/wellPanel.png)
+## La navigation en onglets
 
-## navbarPage
-
-Utiliser une barre de navigation et des onglets avec `navbarPage` et `tabPanel`:
+On peut aussi utiliser une barre de navigation et des onglets avec `navbarPage` et `tabPanel`:
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(
@@ -713,7 +755,7 @@ shinyUI(
 ```
 
 
-Nous pouvons rajouter un second niveau de navigation avec un `navbarMenu` : 
+Nous pouvons de plus ajouter un second niveau de navigation avec un `navbarMenu` : 
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(
@@ -731,11 +773,13 @@ shinyUI(
 )
 ```
 
-![nav](img/navbar.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/navbar.png}
+\end{center}
 
-## tabsetPanel
+## Les onglet de sélection
 
-Plus généralement, nous pouvons créer des onglets à n'importe quel endroit en utilisant `tabsetPanel` & `tabPanel`:
+Plus généralement, on peut créer des onglets à n'importe quel endroit en utilisant `tabsetPanel` & `tabPanel`:
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -753,11 +797,11 @@ shinyUI(fluidPage(
 ))
 ```
 
-![pan](img/tabpanel.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/tabpanel.png}
+\end{center}
 
-## navlistPanel
-
-Une alternative au `tabsetPanel`, pour une disposition verticale plutôt qu'horizontale : ``navlistPanel``
+La `navlistPanel` est une alternative au `tabsetPanel`, pour une disposition verticale plutôt qu'horizontale.
 
 ```{r , echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -769,14 +813,13 @@ shinyUI(fluidPage(
 ))
 ```
 
-![pan](img/navList.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/navList.png}
+\end{center}
 
-## Grid Layout
+## Structure à la carte
 
-Créer sa propre organisation avec `fluidRow()` et `column()`
-
-* chaque ligne peut être divisée en 12 colonnes 
-* le dimensionnement final de la page est automatique en fonction des éléments dans les lignes / colonnes
+Un structure très populaire dans **shiny** est la `fluidRow()`. Elle permet de diviser la page en unités verticales via les `column()`. Il est important de retenir que chaque ligne peut être divisée en __12 colonnes__. Il s'agit d'un dimensionnemet relatif à la taille de l'écran côté client. Le rendu final de la page est automatiquement adapté en fonction des éléments dans les lignes / colonnes.
 
 ```{r , echo = TRUE, eval = FALSE}
 
@@ -791,21 +834,23 @@ tabPanel(title = "Summary",
          ))
 ```
 
-
-![grid](img/grid.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/grid.png}
+\end{center}
 
 ## Inclure du HTML
 
-De nombreuses de balises __html__ sont disponibles avec les fonctions ``tags`` :
+De nombreuses balises __html__ sont disponibles avec les fonctions ``tags`` :
 
 ```{r, echo = TRUE}
 names(shiny::tags)
 ```
 
+\begin{center}
+  \includegraphics[width=14cm]{img/tags.png}
+\end{center}
 
-![grid](img/tags.png)
-
-C'est également possible de passer du code __HTML__ directement en utilisant la fonction du même nom :
+Il est également possible de faire appel à du code __HTML__ directement en utilisant la fonction du même nom:
 
 ```{r, eval = FALSE}
 fluidPage(
@@ -813,41 +858,40 @@ fluidPage(
 )
 ```
 
-## shinydashboard
+Le package **shiny** permet une personnalisation infinie car toutes les structures peuvent s'utiliser en même temps !
 
-Le package [shinydashboard](https://rstudio.github.io/shinydashboard/) propose d'autres fonctions pour créer des tableaux de bords :
+\begin{center}
+  \includegraphics[width=12cm]{img/struct.png}
+\end{center}
 
-![grid](img/dash.png)
+## Un package, une interface : shinydashboard
 
-<https://rstudio.github.io/shinydashboard/>
+Le package **shinydashboard** \citep{shinydashboard} [^fn_shinydash] propose d'autres fonctions pour créer des tableaux de bords:
 
-## Combiner les structures
+\begin{center}
+  \includegraphics[width=10cm]{img/dash.png}
+\end{center}
 
-Toutes les structures peuvent s'utiliser en même temps !
+[^fn_shinydash]: Cf. page de documentation <https://rstudio.github.io/shinydashboard>
 
-![grid](img/struct.png)
+# Aspect général, personnalisation et réactivité
 
-# Customisation avec du CSS
+## Customisation avec du CSS
 
-__Shiny__ utilise [Bootstrap](http://getbootstrap.com/) pour la partie __CSS__.
+__Shiny__ utilise le thème Bootstrap (cf. <http://getbootstrap.com>) pour la partie __CSS__. Comme pour un  développement web \og classique\fg{}, nous pouvons modifier les propriétés __CSS__ de trois façons:
 
-Comme dans du développement web "classique", nous pouvons modifier le __CSS__ de trois façons :
+a. en faisant un lien vers un fichier .css externe et en ajoutant des feuilles de style dans le répertoire ``www`` [^fn_themes];
+b. en ajoutant des propriétés __CSS__ en en-tête i.e., dans le header __HTML__;
+c. en écrivant individuellement des propriétés __CSS__ dans les éléments.
 
-- en faisant un lien vers un fichier .css externe, en ajoutant des feuilles de style dans le répertoire ``www``
-- en ajoutant du __CSS__ dans le header __HTML__
-- en écrivant individuellement du CSS aux éléments.
+[^fn_themes]: Quelques exemples sont à disposition grâce au package **shinythemes** \citep{shinythemes} (cf. <http://rstudio.github.io/shinythemes>).
 
-Il y a une notion d'ordre et de priorité sur ces trois informations : le __CSS__ "individuel" l'emporte sur le __CSS__ du header, qui l'emporte sur le __CSS__ externe
+Néanmoins, il y a une notion d'ordre et de priorité pour ces trois informations: le __CSS__ \og individuel\fg{} l'emporte sur le __CSS__ du header, qui l'emporte sur le __CSS__ externe.
 
-On peut aussi utiliser le package [shinythemes](http://rstudio.github.io/shinythemes)
+On peut aussi utiliser complètement un fichier .css externe (e.g., voir figure~\ref{superhero}). Dans ce cas, il y a deux façons d'y faire appel: 
 
-## Avec un .css externe
-
-On peut par exemple aller prendre un thème sur [bootswatch](http://bootswatch.com/).
-
-- Deux façons pour le renseigner : 
-+ argument ``theme`` dans ``fluidPage``
-+ ou avec un tags html : ``tags$head`` et ``tags$link``
+a. utiliser l'argument ``theme`` dans ``fluidPage``;
+b. utiliser un tag html : ``tags$head`` et ``tags$link``.
 
 ```{r, eval = FALSE}
 library(shiny)
@@ -860,13 +904,13 @@ ui <- fluidPage(theme = "mytheme.css",
 )
 ```
 
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{img/css1.png}
+  \caption{Exemple du thème **superhero**. Beaucoup d'autres sont disponibles à l'adresse http://bootswatch.com.\label{superhero}}
+\end{figure}
 
-![css1](img/css1.png)
-
-## Ajout de css dans le header
-
-- Le __CSS__ inclut dans le header sera prioritaire au __CSS__ externe
-- inclusion avec les tags html : ``tags$head`` et ``tags$style``
+Si l'on souhaite ajouter une propriéte en en-tête, elle sera prioritaire sur le __CSS__ externe. On utilise alors les tags __HTML__ : ``tags$head`` et ``tags$style``
 
 ```{r, eval = FALSE}
 library(shiny)
@@ -878,11 +922,11 @@ tags$head(
 )
 ```
 
-![css2](img/css2.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/css2.png}
+\end{center}
 
-## CSS sur un élément
-
-Pour finir, on peut également passer directement du __CSS__ aux éléments __HTML__ :
+On peut également passer directement du __CSS__ aux éléments __HTML__:
 
 ```{r, eval = FALSE}
 library(shiny)
@@ -891,31 +935,26 @@ h1("Mon titre", style = "color: #48ca3b;")
 )
 ```
 
-![css3](img/css3.png)
+\begin{center}
+  \includegraphics[width=10cm]{img/css3.png}
+\end{center}
 
-# Graphiques intéractifs
+## Graphiques intéractifs
 
-Avec notamment l'arrivée du package [htmlwidgets](http://www.htmlwidgets.org/), de plus en plus de fonctionnalités de librairies javascript sont accessibles sous __R__ : 
+Avec notamment l'arrivée du package **htmlwidgets** \citep{htmlwidgets} [^fn_htmlwidgets], de plus en plus de fonctionnalités JavaScript sont accessibles sous __R__. Voici quelques librairies pouvant s'avérer:
 
-* [dygraphs (time series)](http://rstudio.github.io/dygraphs/)
-* [DT (interactive tables)](http://rstudio.github.io/DT/)
-* [Leafet (maps)](http://rstudio.github.io/leaflet/)
-* [d3heatmap](https://github.com/rstudio/d3heatmap)
-* [threejs (3d scatter & globe)](http://bwlewis.github.io/rthreejs)
-* [rAmCharts](http://datastorm-open.github.io/introduction_ramcharts/)
-* [visNetwork](http://datastorm-open.github.io/visNetwork)
+* dygraphs (time series) \citep{dygraphs} (cf. <http://rstudio.github.io/dygraphs>)
+* DT (interactive tables) \citep{dt} (cf. <http://rstudio.github.io/DT>)
+* Leafet (maps) \citep{leaflet} (cf. <http://rstudio.github.io/leaflet>)
+* d3heatmap \citep{d3heatmap} (cf. <https://github.com/rstudio/d3heatmap>)
+* threejs \citep{threejs} (3d scatter & globe) (cf. <http://bwlewis.github.io/rthreejs>)
+* rAmCharts \citep{ramcharts} (cf. <http://datastorm-open.github.io/introduction_ramcharts>)
+* visNetwork \citep{visnetwork} (cf. <http://datastorm-open.github.io/visNetwork>)
 * ...
 
-Plus généralement, jeter un oeil sur la [gallerie suivante!](http://gallery.htmlwidgets.org/)
+[^fn_htmlwidgets]: Pour de nombreux exemples, on peut jeter un oeil sur la galerie à l'adresse <http://gallery.htmlwidgets.org>. Également, on peut se référer à l'aide en ligne <https://bookdown.org/yihui/rmarkdown>.
 
-## Utilisation dans shiny
-
-Tous ces packages sont utilisables simplement dans __shiny__. En effet, ils contiennent les deux fonctions nécessaires : 
-
-- __renderXX__
-- __xxOutput__
-
-Par exemple avec le package  [dygraphs](http://rstudio.github.io/dygraphs/) : 
+Tous ces packages sont utilisables simplement dans __shiny__. Ils contiennent les deux fonctions nécessaires __renderXX__ et __xxOutput__. Par exemple avec le package **dygraphs** \citep{dygraphs}: 
 
 ```{r, eval = FALSE}
 # Server
@@ -926,32 +965,33 @@ output$dygraph <- renderDygraph({
 dygraphOutput("dygraph")
 ```
 
-![dyg](img/dygraphs.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/dygraphs.png}
+\end{center}
 
-![leaf](img/leaflet.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/leaflet.png}
+\end{center}
 
-![ram](img/ramcharts.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/ramcharts.png}
+\end{center}
 
-![vis](img/visnetwork.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/visnetwork.png}
+\end{center}
 
-![ggv](img/ggvis.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/ggvis.png}
+\end{center}
 
-# Isolation
+# Pour une meilleure maîtrise de la réactivité
 
-## Définition
+## Isolation
 
-Par défaut, les outputs et les expressions réactives se mettent à jour automatiquement quand un des inputs présents dans le code change de valeur. Dans certains cas, on aimerait pouvoir contrôler un peu cela.
+Par défaut, les outputs et les expressions réactives se mettent à jour **automatiquement** quand un des inputs présents dans le code change de valeur. Cependant et dans certains cas, on aimerait pouvoir contrôler un peu cela. Par exemple, en utilisant un bouton (e.g., __actionButton__) pour déclencher le calcul des sorties. Un input peut être isolé ainsi `isolate(input$[id])`. On peut aussi isoler une expression avec la notation suivante `isolate({expr})`.
 
-Par exemple, en utilisant un bouton de validation (__actionButton__) des inputs pour déclencher le calcul des sorties.
-
-- un input peut être isolé comme cela `isolate(input$id)`
-
-- une expression avec la notation suivante `isolate({expr})` et l'utilisation de ``{}``
-
-## Exemple 1
-
-- __ui.r__: 
-Trois inputs : __color__ et __bins__ pour l'histogramme, et un __actionButton__ :
+Prenons l'exemple d'une interface simple avec trois inputs : __color__ et __bins__ pour l'histogramme, et un __actionButton__ :
 
 ```{r, echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -968,9 +1008,9 @@ shinyUI(fluidPage(
 ))
 ```
 
-- __server.r__: 
+### Isolation par expression
 
-On isole tout le code sauf  l'__actionButton__ :
+On isole tout le code sauf  l'__actionButton__. L'histogramme sera mis à jour **uniquement** quand l'utilisateur cliquera sur le bouton:
 
 ```{r, echo = TRUE, eval = FALSE}
 shinyServer(function(input, output) {
@@ -986,12 +1026,11 @@ shinyServer(function(input, output) {
 })
 ```
 
-L'histogramme sera donc mis-à-jour quand l'utilisateur cliquera sur le bouton.
+\begin{center}
+  \includegraphics[width=12cm]{img/isolation.png}
+\end{center}
 
-![iso](img/isolation.png)
-
-
-## Exemple 2
+On isole tout le code sauf  l'__actionButton__ et l'`input$color`. L'histogramme sera mis à jour **soit** quand l'utilisateur cliquera sur le bouton **soit** quand il changera la couleur:
 
 - __server.r__: 
 
@@ -1007,31 +1046,31 @@ output$distPlot <- renderPlot({
 })
 ```
 
-Même résultat en isolant seulement le troisième et dernier input ``input$bins``
+### Isolation par input
+
+Même résultat en isolant seulement le troisième et dernier input ``input$bins``:
 
 ```{r, echo = TRUE, eval = FALSE}
-input$go_graph
-x <- faithful[, 2]
-bins <- seq(min(x), max(x), length.out = isolate(input$bins) + 1)
-hist(x, breaks = bins, col = input$color, border = 'white')
+output$distPlot <- renderPlot({
+  input$go_graph
+  inputColor <- input$color
+  x <- faithful[, 2]
+  bins <- seq(min(x), max(x), length.out = isolate(input$bins) + 1)
+  hist(x, breaks = bins, col = input$color, border = 'white')
+})
 ```
 
-L'histogramme sera donc mis-à-jour quand l'utilisateur cliquera sur le bouton ou quand la couleur changera.
 
-# Expressions réactives
+## Les expressions réactives
 
-Les expressions réactives sont très utiles quand on souhaite utiliser le même résultat/objet dans plusieurs outputs, en ne faisant le calcul qu'une fois.
-
-Il suffit pour cela d'utiliser la fonction ``reactive`` dans le __server.R__
-
-Par exemple, nous voulons afficher deux graphiques à la suite d'une ACP: 
+Les expressions réactives sont très utiles quand on souhaite utiliser le même résultat/objet dans plusieurs outputs, en ne faisant le calcul qu'une fois. Il suffit pour cela d'utiliser la fonction ``reactive`` dans le __server.R__. Par exemple, nous voulons afficher deux graphiques à la suite d'une ACP: 
 
 * La projection des individus
 * La projection des variables
 
-## Exemple sans une expression réactive
+Exemple sans une expression réactive:
 
-* __server.R__: le calcul est réalisé deux fois...
+__server.R__: le calcul est réalisé deux fois...
 
 ```{r, echo = TRUE, eval = FALSE}
 require(FactoMineR) ; data("decathlon")
@@ -1047,9 +1086,9 @@ output$graph_pca_var <- renderPlot({
 })
 ```
 
-## Exemple avec une expression réactive
+Exemple avec une expression réactive:
 
-* __server.R__ : Le calcul est maintenant effectué qu'une seule fois !
+__server.R__ : le calcul est maintenant effectué qu'une seule fois !
 
 ```{r, echo = TRUE, eval = FALSE}
 require(FactoMineR) ; data("decathlon")
@@ -1067,24 +1106,9 @@ output$graph_pca_var <- renderPlot({
 })
 ```
 
-## Note
+Une expression réactive va nous faire gagner du temps et de la mémoire, _RAM_. Cependant, on conseille d'utiliser des expressions réactives seulement quand cela dépend d'inputs [^fn_scoping]. Une expression réactive se comporte __comme un output__. Sa valeur est mise à jour chaque fois qu'un input présent dans le code change. Également, elle se comporte __comme un input__ dans un _renderXX_ dans la mesure où l'output est mis à jour quand l'expression réactive change. On notera qu'on récupère la valeur d'une expression réactive de la même manière que l'on ferait __appel à une fonction sans argument__ i.e., avec des parenthèses.
 
-- Une expression réactive va nous faire gagner du temps et de la mémoire
-
-- __Utiliser des expressions réactives seulement quand cela dépend d'inputs__ (pour d'autres variables : http://shiny.rstudio.com/articles/scoping.html)
-
-- __Comme un output__ : mis-à-jour chaque fois qu'un input présent dans le code change
-
-- __Comme un input__ dans un _renderXX_ : l'output est mis-à-jour quand l'expression réactive change
-
-- On récupère sa valeur comme un appel à une fonction, avec des "()".
-
-## reactiveValues
-
-Il existe une alternative à l'utilisation de ``reactive`` avec ``reactiveValues``.
-
-- ``reactiveValues`` permet d'initialiser une liste d'objets réactifs, un peu comme la liste des inputs
-- On va pouvoir par la suite modifier la valeur des objets avec des ``observe`` ou des ``observeEvent``
+Il existe une alternative à l'utilisation de ``reactive`` avec ``reactiveValues``. Cela permet d'initialiser une liste d'objets réactifs, un peu comme la liste des inputs dont on va pouvoir par la suite modifier la valeur des objets avec des ``observe`` ou des ``observeEvent``.
 
 ```{r, echo = TRUE, eval = FALSE}
 # server.R
@@ -1112,22 +1136,15 @@ server = function(input, output) {
 ```
 
 
-![](img/RV.png)
+\begin{center}
+  \includegraphics[width=12cm]{img/RV.png}
+\end{center}
 
+## Les fonctions de mise à jour
 
-# Observe & fonctions d'update
+Il existe une série de fonctions pour mettre à jour les inputs et certaines structures. Elles commencent par ``update...`` et on les utilise généralement à l'intérieur d'un ``observe({expr})``. La syntaxe est similaire à celle des fonctions de création.
 
-## Introduction
-
-- Il existe une série de fonctions pour mettre à jour les inputs et certaines structures
-
-- les fonctions commencent par ``update...``
-
-- On les utilise généralement à l'intérieur d'un ``observe({expr})``
-
-- La syntaxe est similaire à celle des fonctions de création
-
-- __Attention__ : il est nécessaire d'ajouter un argument _"session"_  dans la définition du  **server** 
+__Attention__: il est nécessaire d'ajouter un argument _\og session\fg{}_  dans la définition du  **server** 
 
 ```{r, echo = TRUE, eval = FALSE}
 shinyServer(function(input, output, session) {...})
@@ -1151,7 +1168,7 @@ Pour changer dynamiquement l'onglet sélectionné :
 
 - __updateNavbarPage__,  __updateNavlistPanel__, __updateTabsetPanel__
 
-## Exemple sur un input
+Exemple sur un input:
 
 ```{r, echo = TRUE, eval = FALSE}
 shinyUI(fluidPage(
@@ -1189,12 +1206,16 @@ shinyServer(function(input, output, session) {
 })
 ```
 
-![obs1](img/observer1.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/observer1.png}
+\end{center}
 
-![obs2](img/observer2.png)
+\begin{center}
+  \includegraphics[width=14cm]{img/observer2.png}
+\end{center}
 
 
-##  Exemple sur des onglets 
+Exemple sur des onglets:
 
 __Il faut rajouter un id dans la structure__
 
@@ -1226,10 +1247,7 @@ shinyServer(function(input, output, session) {
 })
 ```
 
-## observeEvent
-
-- Une variante de la fonction ``observe`` est disponible avec la fonction ``observeEvent``
-- On définit alors de façon explicite l'espression qui représente l'événement _et_ l'expression qui sera éxécutée quand l'événement se produit
+Une variante de la fonction ``observe`` est disponible avec la fonction `observeEvent`. On définit alors de façon explicite l'expression qui représente l'événement **et** l'expression qui sera exécutée quand l'événement se produit.
 
 ```{r, echo = TRUE, eval = FALSE}
 # avec un observe
@@ -1244,17 +1262,9 @@ observeEvent(input$goSummary, {
 })
 ```
 
+## Les élément d'interface conditionnels
 
-# Conditional panels
-
-- Il est possible d'afficher conditionnellement ou non certains éléments :  
-
-```
-conditionalPanel(condition = [...], )
-```
-
-- La condition peut se faire sur des inputs ou des outputs
-- Elle doit être rédigée en __javascript__...
+Il est possible d'afficher conditionnellement certains éléments avec l'appel suivant `conditionalPanel(condition = [...], )`. La condition peut dépendre des inputs ou des outputs. Elle doit être rédigée en __javascript__:
 
 ```
 conditionalPanel(condition = "input.checkbox == true", [...])
@@ -1286,16 +1296,15 @@ shinyApp(
 )
 ```
 
-![cond1](img/cond1.png)
-
+\begin{center}
+  \includegraphics[width=12cm]{img/cond1.png}
+\end{center}
 
 # Débogage
 
 ## Affichage console
 
-- Un des premiers niveaux de débogage est l'utilisation de ``print`` console au-sein de l'application shiny.
-- Cela permet d'afficher des informations lors du développement et/ou de l'éxécution de l'application
-- Dans __shiny__, on utilisera de préférence ``cat(file=stderr(), ...)`` pour être sûr que l'affichage marche dans tous les cas d'outputs, et également dans les logs avec __shiny-server__
+Un des premiers niveaux de débogage est l'utilisation de _`print console`_ au sein de l'application shiny. Cela permet d'afficher des informations lors du développement et/ou de l'exécution de l'application. C'est un peu déconseillé car il est parfois difficile et souvent laborieux de les supprimer à la fin du développement. Dans __shiny__, on utilisera de préférence ``cat(file=stderr(), ...)`` pour être sûr que l'affichage marche dans tous les cas d'outputs, et également dans les logs avec __shiny-server__.
 
 ```{r, eval = FALSE}
 output$distPlot <- renderPlot({
@@ -1306,12 +1315,10 @@ output$distPlot <- renderPlot({
 ```
 
 
-![ggv](img/debug_cat.png)
+![](img/debug_cat.png)
 
-## Lancement manuel d'un browser
 
-- On peut insérer le lancement d'un ``browser()`` à n'importe quel moment
-- On pourra alors observer les différents objets et avancer pas-à-pas 
+On peut aussi intégrer le lancement d'un ``browser()`` à n'importe quel moment pour observer les différents objets et avancer pas-à-pas 
 
 ```{r, eval = FALSE}
 output$distPlot <- renderPlot({
@@ -1321,14 +1328,15 @@ output$distPlot <- renderPlot({
 })
 ```
 
-- Ne pas oublier de l'enlever une fois le développement terminé...!
+Cependant, il ne faut pas oublier de l'enlever une fois le développement terminé. Au cours du développement, la meilleure solution est souvent le recours aux points d'arrêt. Ils permettent de suivre facilement le déroulement de l'exécution et échappent par nature aux problème de suppression en fin de projet car il ne n'affectent pas la console.
 
-
-![ggv](img/debug_browser.png)
+\begin{center}
+\includegraphics[width=12cm]{img/debug_cheat.png}
+\end{center}
 
 ## Lancement automatique d'un browser
 
-- L'option ``options(shiny.error = browser)`` permet de lancer un ``broswer()`` automatiquement lors de l'apparition d'une erreur
+L'option ``options(shiny.error = browser)`` permet de lancer un ``broswer()`` automatiquement lors de l'apparition d'une erreur
 
 ```{r, eval = FALSE}
 options(shiny.error = browser)
@@ -1336,20 +1344,20 @@ options(shiny.error = browser)
 
 ## Mode "showcase"
 
-- En lançant une application avec l'option  ``display.mode="showcase"`` et l'utilisation de la fonction ``runApp()``, 
-on peut observer en direct l'éxécution du code :
+En lançant une application avec l'option  ``display.mode="showcase"`` et l'utilisation de la fonction ``runApp()``, on peut observer en direct l'éxécution du code :
 
 ```{r, eval = FALSE}
 runApp("path/to/myapp", display.mode="showcase")
 ```
 
-![ggv](img/debug_showcase.png)
+![](img/debug_showcase.png)
 
 ## Reactive log
 
-- En activant l'option ``shiny.reactlog``, on peut visualiser à tous instants les dépendances et les flux entre les objets réactifs de __shiny__
-+ soit en tappant ``ctrl+F3`` dans le navigateur web
-+ soit en insérant ``showReactLog()`` au-sein du code shiny
+En activant l'option ``shiny.reactlog``, on peut visualiser à tous instants les dépendances et les flux entre les objets réactifs de __shiny__ :
+
+a. soit en tappant ``ctrl+F3`` dans le navigateur web
+b. soit en insérant ``showReactLog()`` au-sein du code shiny
 
 ```{r, eval = FALSE}
 options(shiny.reactlog=TRUE) 
@@ -1361,37 +1369,36 @@ output$distPlot <- renderPlot({
 }) 
 ```
 
-
-![ggv](img/debug_log.png)
+![](img/debug_log.png)
 
 ## Communication client/server
 
-- Toutes les communications entre le client et le server sont visibles en utilisant l'option ``shiny.trace``
+Toutes les communications entre le client et le server sont visibles en utilisant l'option ``shiny.trace``
 
 ```{r, eval = FALSE}
 options(shiny.trace = TRUE) 
 ```
 
-![ggv](img/debug_trace.png)
+![](img/debug_trace.png)
 
 ## Traçage des erreurs
 
-- Depuis ``shiny_0.13.1``, on récupère la stack trace quand une erreur se produit
-- Si besoin, on peut récupérer une stack trace encore plus complète, comprenant les diffénrets fonctions internes, avec ``options(shiny.fullstacktrace = TRUE)``
-
+Depuis **shiny_0.13.1**, on récupère la _stack trace_ quand une erreur se produit. Si besoin, on peut récupérer une _stack trace_ encore plus complète, comprenant les diffénrets fonctions internes, avec ``options(shiny.fullstacktrace = TRUE)``.
 
 ```{r, eval = FALSE}
 options(shiny.fullstacktrace = TRUE)
 ```
 
-![ggv](img/debug_stack.png)
+![](img/debug_stack.png)
 
-# Quelques bonnes pratiques
+# Conclusion
 
-- Préférer l'underscore (_) au point (.) comme séparateur dans le nom des variables. En effet, le **.** peut amener de mauvaises intérations avec d'autres langages, comme le __JavaScript__
-- Faire bien attention à __l'unicité des différents identifiants__ des inputs/outputs
-- Pour éviter des problèmes éventuels avec __des versions différentes de packages__, et notamment dans le cas de __plusieurs applications shiny__ et/ou différents environnements de travail, essayer d'utiliser [packrat](https://rstudio.github.io/packrat/)
-- Mettre toute la __partie "calcul"__ dans des __fonctions/un package__ et effectuer des tests ([testthat](http://r-pkgs.had.co.nz/tests.html))
+## Quelques bonnes pratiques
+
+- Préférer l'underscore (_) au point (.) comme séparateur dans le nom des variables. En effet, le **.** peut amener de mauvaises intérations avec d'autres langages, comme le __JavaScript__;
+- Faire bien attention à __l'unicité des différents identifiants__ des inputs/outputs;
+- Pour éviter des problèmes éventuels avec __des versions différentes de packages__, et notamment dans le cas de __plusieurs applications shiny__ et/ou différents environnements de travail, essayer d'utiliser **packrat** \citep{packrat} (cf. <https://rstudio.github.io/packrat>)
+- Mettre toute la __partie \og calcul\fg{}__ dans des __fonctions/un package__ et effectuer des tests avec **testthat** \citep{testthat} (cf. <http://r-pkgs.had.co.nz/tests.html>)
 - Diviser la partie __ui.R__ et __server.R__ en plusieurs scripts, un par onglet par exemple :
 
 ```{r, echo = TRUE, eval = FALSE}
@@ -1409,20 +1416,9 @@ shinyServer(function(input, output, session) {
 })
 ```
 
-# Quelques mots sur shiny-server
+## Quelques mots sur shiny-server
 
-On peut déployer en interne nos applications shiny en installant un [shiny-server](https://www.rstudio.com/products/shiny/shiny-server2/). 
-
-- Uniquement sur linux : ubuntu 12.04+, RedHat/CentOS 5+, SUSE Enterprise Linux 11+
-- Version gratuite : déployer plusieurs applications __shiny__
-- Version payante : 
-    + authentification
-    + ressources par applications (nombre de coeurs, mémoire, ...)
-    + monitoring
-
-------
-
-Une fois le serveur installé, il suffit de déposer les applications dans le répertoire dédié, et elles deviennent directement accessibles via l'adresse _server:port_ou_redirection/nom_du_dossier_.
+On peut déployer en interne nos applications shiny en installant un shiny-server (cf. <https://www.rstudio.com/products/shiny/shiny-server2>). C'est uniquement disponible sur linux : ubuntu 12.04+, RedHat/CentOS 5+, SUSE Enterprise Linux 11+. La version gratuite permet de déployer plusieurs applications __shiny__. La version payante propose entre autres l'authentification des utilisateurs, une optimisation des ressources par applications (nombre de coeurs, mémoire, etc.), un monitoring. Une fois le serveur installé, il suffit de déposer les applications dans le répertoire dédié, et elles deviennent directement accessibles via l'adresse `server:port_ou_redirection/nom_du_dossier`.
 
 ![](img/SS1.png)
 
@@ -1434,17 +1430,16 @@ Des logs sont alors disponibles sous la forme de ``print console`` :
 
 ![](img/SS4.png)
 
-## Références / Tutoriaux / Exemples
+## Références / Tutoriels / Exemples
 
-* http://shiny.rstudio.com/
-* http://shiny.rstudio.com/articles/
-* http://shiny.rstudio.com/tutorial/
-* http://shiny.rstudio.com/gallery/
-* https://www.rstudio.com/products/shiny/shiny-user-showcase/
-* http://www.showmeshiny.com/
-
+* <http://shiny.rstudio.com/articles>
+* <http://shiny.rstudio.com/tutorial>
+* <http://shiny.rstudio.com/gallery>
+* <https://www.rstudio.com/products/shiny/shiny-user-showcase>
+* <http://www.showmeshiny.com>
 
 
+NB: Ce document a été rédigé avec __rmarkdown__ \citep{rmarkdown}.
 
 
 

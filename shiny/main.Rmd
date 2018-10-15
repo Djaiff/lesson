@@ -1,7 +1,9 @@
 ---
-title: "Présentation R - Shiny"
-author: "B.Thieurmel, benoit.thieurmel@datastorm.fr"
-date: "21/04/2017"
+title: Présentation R - Shiny
+author:
+  - Benoit T., benoit.thieurmel@datastorm.fr
+  - Jeffery P., jeffery.petit@ls2n.fr
+date: Dernière màj le 13 octobre 2018
 output:
   ioslides_presentation:
     css: css/shiny_niv1.css
