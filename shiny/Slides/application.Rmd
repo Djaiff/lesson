@@ -1,0 +1,109 @@
+---
+runtime: shiny
+---
+
+## Structure d'une application
+
+__Un seul fichier...__
+
+- Enregistré sous le nom __app.R__
+- Se terminant par la commande shinyApp()
+- Pour les applications légères
+
+<div style="text-align:center" markdown="1">
+<img src="img/single_app.png" alt="Drawing" style="width: 70%;">
+</div>
+
+## Structure d'une application | Un seul fichier
+
+```{r, eval = FALSE}
+library(shiny)
+ui <- fluidPage(
+  sliderInput(inputId = "num", label = "Choose a number", 
+              value = 25, min = 1, max = 100),  
+  plotOutput("hist")
+)
+server <- function(input, output) {  
+  output$hist <- renderPlot({
+    hist(rnorm(input$num))  
+  }) 
+}
+shinyApp(ui = ui, server = server)
+```
+
+## Structure d'une application
+
+__Deux fichiers...__
+
+<div style="float: left; width: 50%;">
+
+- FRONT &rarr; __ui.R__ 
+
+  Interface utilisateur
+  
+  <br/><br/>
+  
+- BACK &rarr; __server.R__ 
+
+  Calculs et manipulation des données
+</div>
+
+<div style="float: left; width: 50%;">
+<img src="img/dual_apps.png" alt="Drawing" style="width: 100%;">
+</div>
+
+## Structure d'une application | Deux fichiers
+
+__ui.R__
+```{r, eval = FALSE}
+library(shiny)
+fluidPage(
+  sliderInput(inputId = "num", label = "Choose a number", 
+              value = 25, min = 1, max = 100),  
+  plotOutput("hist")
+)
+```
+
+__server.R__
+```{r, eval = FALSE}
+library(shiny)
+function(input, output) {  
+  output$hist <- renderPlot({hist(rnorm(input$num))}) 
+}
+```
+
+## Structure d'une application | Interface en HTML
+
+Même si en général on code l'interface dans un __script R__, il est également possible de la coder entièrement dans un fichier __HTML__. Plus d'informations à cette adresse https://shiny.rstudio.com/articles/html-ui.html
+
+- Côté interface utilisateur, un fichier __index.html__ dans le répertoire ``www``
+- Côté serveur dans le script __server.R__
+
+<div style="text-align:center" markdown="1">
+<img src="img/html_apps.png" alt="Drawing" style="width: 40%;">
+</div>
+
+
+## Structure d'une application | Données/fichiers complémentaires
+
+- L'environnement __R__ (_working directory_) est le chemin de votre application où se trouvent le serveur et l'interface... on peut donc accéder de façon relative à tous les objets présents dans le dossier
+
+&#9787; On peut donc charger tout type de fichiers **.R**, **.RDATA**, **.RDS**, **.csv**, etc.
+
+- L'application web, comme de convention, accède à tous les éléments présents dans le dossier ``www``
+
+<div style="text-align:center" markdown="1">
+<img src="img/more_apps.png" alt="Drawing" style="width: 70%;">
+</div>
+
+## Structure d'une application | Partage ui &harr; server
+
+__Le serveur et l'interface communiquent uniquement par le biais des inputs et des outputs__
+
+- Nous pouvons ajouter un script nommé **global.R** pour partager des éléments (variables,  packages, ...) entre la partie __interface__ et la partie __serveur__ 
+
+    - Tout ce qui est présent dans le **global.R** est visible à la fois dans le __ui.R__ et dans le __server.R__
+
+    - Le script **global.R** est chargé uniquement une seul fois au lancement de l'application
+
+- Dans le cas d'une utilisation avec un *shiny-server*, les objets globaux sont également partagés entre les utilisateurs

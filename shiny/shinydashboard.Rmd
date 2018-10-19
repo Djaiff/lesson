@@ -1,14 +1,4 @@
 ---
-title: "Presentation shinydashboard"
-author: "DataKnowledge"
-date: "October, 2015"
-output:
-  ioslides_presentation:
-    css: css/shiny_niv1.css
-    highlight: tango
-    smaller: no
-    transition: slower
-    widescreen: yes
 runtime: shiny
 ---
 

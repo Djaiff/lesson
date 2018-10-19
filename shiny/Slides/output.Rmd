@@ -1,0 +1,243 @@
+---
+runtime: shiny
+---
+
+## Outputs | Vue globale
+
+<div style="text-align:center" markdown="1">
+<img src="img/all_output.png" alt="Drawing" style="width: 100%;">
+</div>
+
+## Outputs | Les bonnes règles de construction
+
+- Assigner l'output à afficher dans la liste __output__, avec un nom permettant l'identification côté __UI__
+- Utiliser une fonction __renderXX({expr})__
+- __La dernière expression doit correspondre au type d'objet retourné__
+- Accéder aux inputs, et amener la réactivité, en utilisant la liste __input__ et l'identifiant : __input$[inputId]__
+
+```{r, echo = TRUE, eval = FALSE}
+#ui.R
+selectInput(inputID = "lettre", label = "Lettres:", choices = LETTERS[1:3])
+verbatimTextOutput(outputId = "selection")
+#server.R
+output$selection <- renderPrint({input$lettre})
+```
+
+## Outputs | Print
+
+<div style="float: left; width: 50%;">
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+verbatimTextOutput(outputId = "texte")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+output$texte <- renderPrint({
+  c("Hello shiny !")
+})
+```
+</div>
+
+<div style="float: right; width: 50%;">
+```{r, echo = FALSE}
+shinyApp(
+  ui = fluidPage(verbatimTextOutput(outputId = "texte")), 
+  server = function(input, output) {
+    output$texte <- renderPrint(c("Hello shiny !"))
+  }
+)
+```
+</div>
+
+## Outputs | Texte
+
+<div style="float: left; width: 50%;">
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+textOutput(outputId = "texte")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+output$texte <- renderText({
+  c("Hello shiny !")
+})
+```
+</div>
+
+<div style="float: right; width: 50%;">
+```{r, echo = FALSE, eval = TRUE}
+shinyApp(
+  ui = fluidPage(textOutput(outputId = "texte")), 
+  server = function(input, output) {
+    output$texte <- renderText(c("Hello shiny !"))
+  }
+)
+```
+</div>
+
+## Outputs | Plot | _Code_
+
+<div style="float: left; width: 50%;">
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+plotOutput("myplot")
+```
+
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+output$myplot <- renderPlot({
+  require(grDevices) # for colours
+  tN <- table(Ni <- stats::rpois(100, lambda = 5))
+  
+  r <- barplot(tN, col = rainbow(20))
+  lines(r, tN, type = "h", col = "red", lwd = 2)
+})
+```
+</div>
+
+<div style="float: right; width: 50%;">
+```{r, echo = FALSE}
+rmarkdown::render_delayed({
+  shinyApp(ui = fluidPage(
+    tags$div(plotOutput("myplot"), align = 'center')
+  ), 
+  server = function(input, output) {
+    output$myplot <- renderPlot({
+      require(grDevices) # for colours
+      tN <- table(Ni <- stats::rpois(100, lambda = 5))
+      
+      r <- barplot(tN, col = rainbow(20))
+      lines(r, tN, type = "h", col = "red", lwd = 2)
+    })
+  })
+})
+```
+</div>
+
+## Outputs | Table | _Code_
+
+<div style="float: left; width: 50%;">
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+tableOutput(outputId = "table")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+data("iris")
+output$table <- renderTable({
+  iris[1:5, ]
+})
+```
+</div>
+
+<div style="float: right; width: 50%;">
+
+```{r, echo = FALSE, eval = TRUE}
+rmarkdown::render_delayed({
+  shinyApp(
+    ui = fluidPage(tags$div(tableOutput(outputId = "table"), align = 'center')), 
+    server = function(input, output) {
+      data(iris)
+      output$table <- renderTable({
+        iris[1:5, ]
+      })
+    })
+})
+```
+</div>
+
+## Outputs | DataTable
+
+<div style="float: left; width: 50%;">
+
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+dataTableOutput(outputId = "dataTable")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+data("iris")
+output$dataTable <- renderDataTable({
+  iris[1:10, ]
+})
+```
+</div>
+
+<div style="float: right; width: 50%;">
+```{r, echo = FALSE}
+rmarkdown::render_delayed({
+  shinyApp(
+    ui = fluidPage( tags$div(dataTableOutput(outputId = "dataTable"), align = 'center')), 
+    server = function(input, output) {
+      data(iris)
+      output$dataTable <- renderDataTable({
+        iris[1:5, ]
+      })
+    }
+  )
+})
+```
+</div>
+
+## Outputs | Définir des élements de l'interface côté serveur | Principe
+
+__Dans certains cas, nous souhaitons définir des inputs ou des structures côté server__
+
+__L'exemple typique étant de créer un input dépendant d'un fichier utilisateur, comme lister les colonnes présentes__
+
+Cela est possible avec les fonctions ``uiOutput`` et ``renderUI``
+
+## Outputs | Définir des élements de l'interface côté serveur | Exemple simple
+
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+uiOutput(outputId = "columns")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+output$columns <- renderUI({
+  selectInput(inputId = "sel_col", label = "Column", choices = colnames(data))
+})
+```
+
+----
+
+```{r, echo = TRUE, eval = TRUE}
+shinyApp(
+  ui = fluidPage(
+    selectInput(inputId = "my_data", label = "dataset : ", 
+                choices = c("iris", "faithful")),
+    uiOutput(outputId = "columns")
+  ), 
+  server = function(input, output) {
+    data <- reactive(get(input$my_data, "package:datasets"))
+    output$columns <- renderUI({
+      selectInput(inputId = "sel_col", label = "Column", choices = colnames(data()))
+    })
+  })
+```
+
+## Outputs | Définir des élements de l'interface côté serveur | Exemple plus complexe
+
+- __On peut également renvoyer un élément plus complexe de l'UI, par exemple :__
+tout en ``layout`` ou une ``fluidRow``
+
+- __ui.r__: 
+```{r, echo = TRUE, eval = FALSE}
+uiOutput(outputId = "fluidRow_ui")
+```
+- __server.r__:
+```{r, echo = TRUE, eval = FALSE}
+output$fluidRow_ui <- renderUI(fluidRow(
+  column(width = 3, h3("Value:")),
+  column(width = 3, h3(verbatimTextOutput(outputId = "slinderIn_value")))
+))
+```
+
+## Outputs | Aller plus loin : construire son propre output
+
+__Avec un peu de compétences en HTML/CSS/JavaScript, il est également possible de construire des outputs personnalisés__
+
+Un tutoriel est disponible : [http://shiny.rstudio.com/articles/building-outputs.html](http://shiny.rstudio.com/articles/building-outputs.html)
+
+On peut donc par exemple ajouter comme output un graphique construit avec la librairie [d3.js](https://d3js.org/). Un exemple est disponible dans le dossier ``shinyApps/build_output``

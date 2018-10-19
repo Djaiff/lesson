@@ -1,10 +1,23 @@
 ---
-title: "TP Shiny"
-author: "Société Générale, 21/04/2017 "
+title: TP Shiny
+subtitle: Quelques exercices d'application
+author:
+  - Benoit Thieurmel, benoit.thieurmel@datastorm.fr
+  - Jeffery Petit, jeffery.petit@ls2n.fr
+geometry: margin=3cm
+fontsize: 11pt
+papersize: a4
+linestretch: 1.25
+indent: false
+fontenc: T1
+documentclass: article
+header-includes:
+  - \usepackage[light,math]{iwona}
+  - \usepackage[french]{babel}
 output:
   pdf_document:
     number_sections: true
-    highlight: tango
+    highlight: kate
 ---
 
 # Premiers pas
@@ -36,7 +49,7 @@ Deux fichiers sont créés automatiquement : ui.R et server.R. Lancer directemen
 
 * Visualiser le ``summary`` des données `faithful`.
 
-* __Aller plus loin__ : Essayer de rajouter des options à la visualisation des données. Vous pouvez aller voir également le package complèmentaire [DT](https://github.com/rstudio/DT) (https://github.com/rstudio/DT). 
+* __Aller plus loin__ : Essayer de rajouter des options à la visualisation des données. Vous pouvez aller voir également le package complèmentaire DT (https://github.com/rstudio/DT). 
 
 ## Structure / HTML / CSS
 
@@ -52,16 +65,16 @@ Deux fichiers sont créés automatiquement : ui.R et server.R. Lancer directemen
 
 * Dans un troisième onglet, rédiger un petit résumé sur vous/votre société. Essayer d'ajouter un image (``div`` & ``img``) et un lien vers un site internet (``a``).
 
-* Changer le *thème* de l'application en insérant un ``.css`` externe (``tags$head`` & ``tags$link``). Par exemple en utilisant [bootswatch](http://bootswatch.com/)http://bootswatch.com/)...
+* Changer le *thème* de l'application en insérant un ``.css`` externe (``tags$head`` & ``tags$link``). Par exemple en utilisant bootswatch (http://bootswatch.com/)http://bootswatch.com)...
 
 * __Aller plus loin__ : permettre à l'utilisateur d'exporter les graphiques. (``downloadButton`` & ``jpeg``)
 
-* __Aller plus loin__ : utiliser [shinydashboard](https://rstudio.github.io/shinydashboard/) (https://rstudio.github.io/shinydashboard/) pour restructurer votre application.
+* __Aller plus loin__ : utiliser shinydashboard (https://rstudio.github.io/shinydashboard) pour restructurer votre application.
 
 
 ## Quelques graphiques intéractifs ?
 
-* Remplacer l'histogramme et le boxplot par des graphiques javascript en utilisant le package **rAmCharts** (http://datastorm-open.github.io/introduction_ramcharts/). (``amHist``, ``amBoxplot``, ...)
+* Remplacer l'histogramme et le boxplot par des graphiques javascript en utilisant le package **rAmCharts** (http://datastorm-open.github.io/introduction_ramcharts). (``amHist``, ``amBoxplot``, ...)
 
 ## Réactivité, isolation, observe
 
@@ -79,11 +92,11 @@ Pour clore cette formation Shiny, nous vous proposons la réalisation d'un mini-
 
 Vous pouvez vous inspirer des applications présentes sur les sites suivants : 
 
-* http://shiny.rstudio.com/gallery/
-* http://www.showmeshiny.com/
+* http://shiny.rstudio.com/gallery
+* http://www.showmeshiny.com
 
 Afin de réaliser une application qui respecte la charte graphique de votre entreprise ou de customiser votre application selon vos envies, ajoutez une feuille de style css à votre projet. Vous pouvez vous inspirer des css du site suivant : 
 
-* http://bootswatch.com/
+* http://bootswatch.com
 
-Et pourquoi ne pas utiliser quelques graphiques intéractifs ? (http://gallery.htmlwidgets.org/)
+Et pourquoi ne pas utiliser quelques graphiques intéractifs ? (http://gallery.htmlwidgets.org)

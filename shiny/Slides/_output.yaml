@@ -1,0 +1,6 @@
+ioslides_presentation:
+    css: css/shiny_niv1.css
+    highlight: kate
+    smaller: yes
+    transition: slower
+    widescreen: yes
